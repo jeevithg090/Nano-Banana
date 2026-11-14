@@ -1,56 +1,33 @@
-# Environment variables
+# Environment
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
 
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
 
 # Virtual environments
+.venv/
 venv/
 env/
-ENV/
 
-# IDE
+# IDE / OS
 .vscode/
 .idea/
 *.swp
-*.swo
-
-# OS
 .DS_Store
+._*
 Thumbs.db
 
-# Generated files
-uploads/*
-!uploads/.gitkeep
-output/*
-!output/.gitkeep
-
-# Logs
+# Generated images from the smoke-test script
+generated/
 *.log
-
-# Temporary files
-*.tmp
-*.temp
-# macOS metadata files
-._*
