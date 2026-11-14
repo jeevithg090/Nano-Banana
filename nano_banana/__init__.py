@@ -119,6 +119,8 @@ def create_app(
     def http_error(exc: HTTPException):
         if request.path == "/generate":
             return _error(exc.description or exc.name, exc.code or 500)
+        if exc.code == 404:
+            return render_template("404.html", max_images=settings.max_images), 404
         return exc
 
     @app.errorhandler(Exception)

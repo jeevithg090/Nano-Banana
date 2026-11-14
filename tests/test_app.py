@@ -24,7 +24,14 @@ def test_index_renders_with_metadata(client):
 
 
 def test_static_assets_served(client):
-    for path in ("/static/app.js", "/static/app.css", "/static/favicon.svg"):
+    for path in (
+        "/static/app.js",
+        "/static/app.css",
+        "/static/theme.js",
+        "/static/favicon.svg",
+        "/static/og-image.png",
+        "/static/apple-touch-icon.png",
+    ):
         assert client.get(path).status_code == 200
 
 
@@ -136,3 +143,19 @@ def test_unknown_route_404_is_html(client):
     res = client.get("/nope")
     assert res.status_code == 404
     assert res.mimetype == "text/html"
+
+
+def test_404_page_is_branded_with_link_home(client):
+    html = client.get("/nope").get_data(as_text=True)
+    assert "<title>Page not found" in html
+    assert 'href="/"' in html
+    assert "Back to the mixer" in html
+
+
+def test_index_has_social_meta_and_limits(client, settings):
+    html = client.get("/").get_data(as_text=True)
+    assert 'property="og:image"' in html
+    assert "/static/og-image.png" in html
+    assert 'data-max-images="3"' in html
+    assert f'maxlength="{settings.max_prompt_chars}"' in html
+    assert 'id="liveStatus"' in html
