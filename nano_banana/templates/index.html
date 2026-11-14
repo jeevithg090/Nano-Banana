@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nano Banana Image Mixer</title>
+    <meta name="description" content="Generate images from text, or remix up to {{ max_images }} of your own images, with Google's Gemini image model.">
+    <meta name="theme-color" content="#f5b700">
+    <meta property="og:title" content="Nano Banana Image Mixer">
+    <meta property="og:description" content="Generate and remix images with Google's Gemini image model.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+</head>
+<body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="container">
+        <header class="header">
+            <h1><span aria-hidden="true">🍌</span> Nano Banana Image Mixer</h1>
+            <p>Generate new images from text, or remix your own images, with Google's Gemini image model.</p>
+        </header>
+
+        <main id="main" class="form-container">
+            {% if not configured %}
+            <div class="notice notice-warning" role="alert">
+                <h2>Server not configured</h2>
+                <p>Set <code>GEMINI_API_KEY</code> in the server environment and restart to enable image generation.</p>
+            </div>
+            {% endif %}
+
+            <section class="notice" aria-labelledby="howto-title">
+                <h2 id="howto-title">How to use</h2>
+                <ul>
+                    <li><strong>Text to image:</strong> describe the image you want and press Generate.</li>
+                    <li><strong>Image mixing:</strong> add 1–{{ max_images }} images and describe how to combine or edit them.</li>
+                    <li><strong>Better results:</strong> mention subject, style, lighting, colours and composition.</li>
+                </ul>
+            </section>
+
+            <form id="imageForm" enctype="multipart/form-data" novalidate
+                  data-max-images="{{ max_images }}" data-max-upload-mb="{{ max_upload_mb }}">
+                <div class="form-group">
+                    <label for="prompt">Prompt</label>
+                    <textarea id="prompt" name="prompt" class="prompt-input" required
+                              maxlength="{{ max_prompt_chars }}" aria-describedby="promptHint"
+                              placeholder="e.g. A banana astronaut floating above Earth, cinematic lighting"></textarea>
+                    <p id="promptHint" class="hint">Up to {{ max_prompt_chars }} characters.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="images">Images <span class="optional">(optional, up to {{ max_images }})</span></label>
+                    <div class="file-upload" id="dropZone">
+                        <input type="file" id="images" name="images" multiple
+                               accept="image/png,image/jpeg,image/webp,image/gif,image/bmp"
+                               aria-describedby="imagesHint">
+                        <div class="file-upload-label" aria-hidden="true">
+                            <span class="upload-icon">⬆</span>
+                            <span>Click to choose images or drag and drop them here</span>
+                        </div>
+                    </div>
+                    <p id="imagesHint" class="hint">PNG, JPEG, WEBP, GIF or BMP · {{ max_upload_mb }} MB total.</p>
+                    <ul id="filePreview" class="file-preview" aria-label="Selected images"></ul>
+                </div>
+
+                <button type="submit" class="generate-btn" id="generateBtn" {% if not configured %}disabled{% endif %}>
+                    Generate image
+                </button>
+            </form>
+
+            <div class="loading" id="loading" role="status" aria-live="polite" hidden>
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Generating your image… this can take up to a minute.</p>
+            </div>
+
+            <div id="errorMessage" class="error-message" role="alert" hidden></div>
+
+            <section id="resultContainer" class="result-container" aria-labelledby="resultTitle" hidden>
+                <h2 id="resultTitle" tabindex="-1">Generated image</h2>
+                <img id="resultImage" class="result-image" alt="">
+                <p id="resultText" class="result-text" hidden></p>
+                <a id="downloadBtn" class="download-btn" href="#" download>Download image</a>
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
