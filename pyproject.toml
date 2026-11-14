@@ -1,0 +1,18 @@
+[project]
+name = "nano-banana"
+version = "1.0.0"
+description = "Flask web app for generating and remixing images with Google's Gemini image model."
+readme = "README.md"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
